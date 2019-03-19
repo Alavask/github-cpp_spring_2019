@@ -7,6 +7,7 @@
 using namespace std;
 
 void SearchArray(int head, int tail, vector<int> &simple);
+void Seive(vector<int> &simple);
 
 const int Max = 100000;
 
@@ -17,25 +18,9 @@ int main(int argc, char* argv[])
 		return -1;//Возврат ошибки
 	}
 
-	int div[Max + 1]; //Минимальные простые делители
-	for (int i = 0; i < Max + 1; i++)
-	{
-		div[i] = 0;
-	}
 	vector<int> simple; //Найденные простые числа
-	for (int i = 2; i <= Max; ++i) //Строим решето Эратосфена за линейное время
-	{
-		if (div[i] == 0)
-		{
-			div[i] = i;
-			simple.push_back(i);
-		}
-		for (int j = 0; j < (int)simple.size() && simple[j] <= div[i] && i * simple[j]<=Max; ++j)
-		{
-			div[i*simple[j]] = simple[j];
-		}
-	}
 
+	Seive(simple);
 
 	int head, tail; //Значения начала и конца подмассива поиска, -1 если неизвестны.
 	head = tail = -1;
@@ -118,5 +103,23 @@ void SearchArray(int head, int tail, vector<int> &simple)
 		}
 	}
 	cout << count << "\n"; //Вывод количества простых чисел в подмассиве
+};
+
+void Seive(vector<int> &simple)
+{
+	int div[Max + 1]; //Минимальные простые делители
+	memset(div, 0, (Max + 1) * sizeof(int));
+	for (int i = 2; i <= Max; ++i) //Строим решето Эратосфена за линейное время
+	{
+		if (div[i] == 0)
+		{
+			div[i] = i;
+			simple.push_back(i);
+		}
+		for (int j = 0; j < (int)simple.size() && simple[j] <= div[i] && i * simple[j] <= Max; ++j)
+		{
+			div[i*simple[j]] = simple[j];
+		}
+	}
 };
 
