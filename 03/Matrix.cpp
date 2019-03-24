@@ -9,27 +9,27 @@ class Matrix
 {
 public:
 	Matrix(size_t rows, size_t columns);
-	size_t getRows(); //получение кол-ва рядов
-	size_t getColumns(); //получение кол-ва колонок
+	size_t getRows();
+	size_t getColumns();
 	~Matrix();
-	struct Proxi //Прокси класс с оператором [] для создания функционала [][]
+	struct Proxi
 	{
 		Proxi(int* rest, size_t columns);
-		int& operator [] (const int column);
-		int& operator [] (const int column) const;
+		int& operator [] (const size_t column);
+		int& operator [] (const size_t column) const;
 		int* _rest;
 		size_t _columns;
 	};
-	Proxi operator [] (const int row); //Оператор [] с последующим переходом в Proxi
-	Proxi operator [] (const int row) const;
-	const void operator *= (const int multiplier) const; //Домножение матрицы на число
-	bool operator != (const Matrix& a); //Сравнение на равенство
-	bool operator == (const Matrix& a); //Сравнение на неравенство
+	const Proxi operator [] (const int row);
+	const Proxi operator [] (const int row) const;
+	void operator *= (const int multiplier) const;
+	bool operator != (const Matrix& a);
+	bool operator == (const Matrix& a);
 
 private:
-	size_t _rows;  //Ряды
-	size_t _columns; //Колонки
-	int* values; //Память для хранения структуры
+	size_t _rows;
+	size_t _columns;
+	int* values;
 };
 
 Matrix::Proxi::Proxi(int* rest, size_t columns)
@@ -38,19 +38,7 @@ Matrix::Proxi::Proxi(int* rest, size_t columns)
 	_columns = columns;
 }
 
-int& Matrix::Proxi::operator [] (const int column)
-{
-	if (column < 0 || column >= _columns) //Проверка границ
-	{
-		throw std::out_of_range("");
-	}
-	else
-	{
-		return _rest[column]; //Возврат ссылки на элемент
-	}
-}
-
-int& Matrix::Proxi::operator [] (const int column) const
+int& Matrix::Proxi::operator [] (const size_t column)
 {
 	if (column < 0 || column >= _columns)
 	{
@@ -62,13 +50,24 @@ int& Matrix::Proxi::operator [] (const int column) const
 	}
 }
 
-Matrix::Matrix(size_t rows, size_t columns) //Конструктор, заполняем значения, выделяем память, инициализируем память
+int& Matrix::Proxi::operator [] (const size_t column) const
+{
+	if (column < 0 || column >= _columns)
+	{
+		throw std::out_of_range("");
+	}
+	else
+	{
+		return _rest[column];
+	}
+}
+
+Matrix::Matrix(size_t rows, size_t columns)
 {
 	_rows = rows;
 	_columns = columns;
 
-	values = new int[_rows * _columns];
-	memset(values, 0, _rows * _columns * sizeof(int));
+	values = new int[_rows * _columns]();
 }
 
 size_t Matrix::getRows()
@@ -93,9 +92,9 @@ bool Matrix::operator != (const Matrix& a)
 
 bool Matrix::operator == (const Matrix& a)
 {
-	if (_rows == a._rows&&_columns == a._columns) //Проверка размерности
+	if (_rows == a._rows&&_columns == a._columns)
 	{
-		for (size_t i = 0; i < _rows * _columns; i++) //Поэлементное сравнение
+		for (size_t i = 0; i < _rows * _columns; i++)
 		{
 			if (values[i] != a.values[i])
 			{
@@ -107,25 +106,25 @@ bool Matrix::operator == (const Matrix& a)
 	return false;
 }
 
-const void Matrix::operator*=(const int multiplier) const
+void Matrix::operator*=(const int multiplier) const
 {
-	for (size_t i = 0; i < _rows * _columns; i++) //Поэлементное умножение
+	for (size_t i = 0; i < _rows * _columns; i++)
 	{
 		values[i] *= multiplier;
 	}
 	return;
 }
 
-Matrix::Proxi Matrix::operator[](const int row)
+const Matrix::Proxi Matrix::operator[](const int row)
 {
-	if (row < 0 || row >= _rows) //Проверка границ
+	if (row < 0 || row >= _rows)
 	{
 		throw std::out_of_range("");
 	}
-	return(Proxi(values + _columns * row, _columns)); //Переход в Proxi класс
+	return(Proxi(values + _columns * row, _columns));
 }
 
-Matrix::Proxi Matrix::operator[](const int row) const
+const Matrix::Proxi Matrix::operator[](const int row) const
 {
 	if (row < 0 || row >= _rows)
 	{

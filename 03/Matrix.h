@@ -10,14 +10,14 @@ public:
 	struct Proxi
 	{
 		Proxi(int* rest, size_t columns);
-		int& operator [] (const int column);
-		int& operator [] (const int column) const;
+		int& operator [] (const size_t column);
+		int& operator [] (const size_t column) const;
 		int* _rest;
 		size_t _columns;
 	};
-	Proxi operator [] (const int row);
-	Proxi operator [] (const int row) const;
-	const void operator *= (const int multiplier) const;
+	const Proxi operator [] (const int row);
+	const Proxi operator [] (const int row) const;
+	void operator *= (const int multiplier) const;
 	bool operator != (const Matrix& a);
 	bool operator == (const Matrix& a);
 
