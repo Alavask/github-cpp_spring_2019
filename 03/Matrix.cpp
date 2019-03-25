@@ -15,14 +15,12 @@ public:
 	struct Proxi
 	{
 		Proxi(int* rest, size_t columns);
-		int& operator [] (const size_t column);
 		int& operator [] (const size_t column) const;
 		int* _rest;
 		size_t _columns;
 	};
-	const Proxi operator [] (const int row);
-	const Proxi operator [] (const int row) const;
-	void operator *= (const int multiplier) const;
+	const Proxi operator [] (const size_t row) const;
+	Matrix& operator *= (const int multiplier);
 	bool operator != (const Matrix& a);
 	bool operator == (const Matrix& a);
 
@@ -38,21 +36,9 @@ Matrix::Proxi::Proxi(int* rest, size_t columns)
 	_columns = columns;
 }
 
-int& Matrix::Proxi::operator [] (const size_t column)
-{
-	if (column < 0 || column >= _columns)
-	{
-		throw std::out_of_range("");
-	}
-	else
-	{
-		return _rest[column];
-	}
-}
-
 int& Matrix::Proxi::operator [] (const size_t column) const
 {
-	if (column < 0 || column >= _columns)
+	if (column >= _columns)
 	{
 		throw std::out_of_range("");
 	}
@@ -106,27 +92,18 @@ bool Matrix::operator == (const Matrix& a)
 	return false;
 }
 
-void Matrix::operator*=(const int multiplier) const
+Matrix& Matrix::operator*=(const int multiplier)
 {
 	for (size_t i = 0; i < _rows * _columns; i++)
 	{
 		values[i] *= multiplier;
 	}
-	return;
+	return *this;
 }
 
-const Matrix::Proxi Matrix::operator[](const int row)
+const Matrix::Proxi Matrix::operator[](const size_t row) const
 {
-	if (row < 0 || row >= _rows)
-	{
-		throw std::out_of_range("");
-	}
-	return(Proxi(values + _columns * row, _columns));
-}
-
-const Matrix::Proxi Matrix::operator[](const int row) const
-{
-	if (row < 0 || row >= _rows)
+	if (row >= _rows)
 	{
 		throw std::out_of_range("");
 	}
